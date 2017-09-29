@@ -49,6 +49,8 @@ class SLPP(object):
         return self.__encode(obj)
 
     def __encode(self, obj):
+        # TODO: enforce `bracket`-encoding for keys
+        _dict_types = [dict, OrderedDict]
         s = ''
         tab = self.tab
         newline = self.newline
@@ -63,16 +65,16 @@ class SLPP(object):
             s += str(obj).lower()
         elif obj is None:
             s += 'nil'
-        elif tp in [list, tuple, dict]:
+        elif tp in [list, tuple] + _dict_types:
             self.depth += 1
-            if len(obj) == 0 or ( tp is not dict and len(filter(
+            if len(obj) == 0 or ( tp not in _dict_types and len(filter(
                     lambda x:  type(x) in (int,  float,  long) \
                     or (isinstance(x, basestring) and len(x) < 10),  obj
                 )) == len(obj) ):
                 newline = tab = ''
             dp = tab * self.depth
             s += "%s{%s" % (tab * (self.depth - 2), newline)
-            if tp is dict:
+            if tp in _dict_types:
                 contents = []
                 for k, v in obj.iteritems():
                     if type(k) is int:
