@@ -39,3 +39,13 @@ mixed   table: 0x880afe0
 array   table: 0x880af60
 string  value
 ```
+
+Use ordered dictonaries as return values from `decode`
+```python
+>>> from slpp import slpp as lua
+>>> data = lua.decode('{ a = 1, b = 2, c = 3 }')
+>>> print list(data.keys())
+['a', 'b', 'c']
+>>> print isinstance(data, OrderedDict)
+True
+```
