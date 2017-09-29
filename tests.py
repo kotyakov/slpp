@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
 
 from slpp import slpp as lua
 
@@ -50,7 +51,7 @@ def differ(value, origin):
     AssertionError: 4 not match original: no.
     """
 
-    if type(value) is not type(origin):
+    if type(value) not in (type(origin), OrderedDict):
         raise AssertionError('Types does not match: {0}, {1}'.format(type(value), type(origin)))
 
     if isinstance(origin, dict):
@@ -173,6 +174,16 @@ def unicode_test():
     ur"""
     >>> assert lua.encode(u'Привет') == '"\xd0\x9f\xd1\x80\xd0\xb8\xd0\xb2\xd0\xb5\xd1\x82"'
     >>> assert lua.encode({'s': u'Привет'}) == '{\n\ts = "Привет"\n}'
+    """
+    pass
+
+
+def orderered_test():
+    r"""
+    >>> data = '{ array = { 65, 23, 5 }, dict = { string = "value", array = { 3, 6, 4}, mixed = { 43, 54.3, false, string = "value", 9 }} ["foo-bar"] = 1 }'
+    >>> result = lua.decode(data, use_ordered=True)
+    >>> assert [key for key in result] == ['array', 'dict', 'foo-bar']
+    >>> assert isinstance(result, OrderedDict)
     """
     pass
 

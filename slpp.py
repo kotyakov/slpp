@@ -33,6 +33,7 @@ class SLPP(object):
     def decode(self, text, use_ordered=True):
         if not text or not isinstance(text, basestring):
             return
+        self.use_ordered = use_ordered
         #FIXME: only short comments removed
         reg = re.compile('--.*$', re.M)
         text = reg.sub('', text, 0)
