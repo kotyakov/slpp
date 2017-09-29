@@ -185,8 +185,15 @@ def orderered_test():
     >>> assert [key for key in result] == ['array', 'dict', 'foo-bar']
     >>> assert isinstance(result, OrderedDict)
     """
-    pass
 
+def test_brackets_enforced():
+    r"""
+    >>> data = '{["foo%"] = 1, ["Bar"] = 2}'
+    >>> result = lua.encode(lua.decode(data))
+    >>> assert '["foo%"]' in result
+    >>> assert 'Bar' in result
+    >>> assert '["Bar"]' not in result
+    """
 
 if __name__ == '__main__':
     import doctest

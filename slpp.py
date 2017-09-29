@@ -18,6 +18,8 @@ class ParseError(Exception):
 
 class SLPP(object):
 
+    NONLABEL_SYMBOLS = {'-', '+', '/', '%'}  # FIXME: make a full set of
+
     def __init__(self):
         self.text = ''
         self.ch = ''
@@ -29,6 +31,12 @@ class SLPP(object):
         self.newline = '\n'
         self.tab = '\t'
         self.use_ordered = False
+
+    @staticmethod
+    def enforce_brackets(key):
+        if set(key) & SLPP.NONLABEL_SYMBOLS:
+            return '["{}"]'.format(key)
+        return key
 
     def decode(self, text, use_ordered=True):
         if not text or not isinstance(text, basestring):
@@ -49,7 +57,6 @@ class SLPP(object):
         return self.__encode(obj)
 
     def __encode(self, obj):
-        # TODO: enforce `bracket`-encoding for keys
         _dict_types = [dict, OrderedDict]
         s = ''
         tab = self.tab
@@ -80,7 +87,7 @@ class SLPP(object):
                     if type(k) is int:
                         contents.append(self.__encode(v))
                     else:
-                        contents.append(dp + '%s = %s' % (k, self.__encode(v)))
+                        contents.append(dp + '%s = %s' % (self.enforce_brackets(k), self.__encode(v)))
                 s += (',%s' % newline).join(contents)
                 
             else:
