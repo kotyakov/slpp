@@ -1,5 +1,7 @@
 import re
 import sys
+from collections import OrderedDict
+
 
 ERRORS = {
     'unexp_end_string': u'Unexpected end of string while parsing Lua string.',
@@ -26,8 +28,9 @@ class SLPP(object):
         self.alnum = re.compile('\w', re.M)
         self.newline = '\n'
         self.tab = '\t'
+        self.use_ordered = False
 
-    def decode(self, text):
+    def decode(self, text, use_ordered=True):
         if not text or not isinstance(text, basestring):
             return
         #FIXME: only short comments removed
@@ -132,7 +135,7 @@ class SLPP(object):
         print ERRORS['unexp_end_string']
 
     def object(self):
-        o = {}
+        o = OrderedDict() if self.use_ordered else {}
         k = None
         idx = 0
         numeric_keys = False
